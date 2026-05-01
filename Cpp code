@@ -1,1 +1,105 @@
+/* --Robotic arm using joystick control
+--Version:0.3 --Beta --git_history_Ver:0
+Git_Status:Non Existent
+
+Joy1h - Broll 
+Joy2h - Bpitch
+Joy2v - Epitch
+Joy1v - Wpitch
+*/
+
+// redundancy
+int StartloopTime;
+int StoploopTime;
+
+//special constrain variables
+const int rollMin = 500;
+const int rollMax = 1641;
+const int pitchMin = 500;
+const int pitchMax = 1071;
+
+//librarys
+#include <Servo.h>
+
+//variables
+int joy1h = 0, joy2h = 0;
+int joy1v = 0, joy2v = 0;
+
+int one = 1;
+
+float angleGrip = 90; 
+
+// Floats for smooth movement
+float calbJoy1h = 90, calbJoy2h = 90;
+float calbJoy1v = 90, calbJoy2v = 90;
+
+bool gripBtnState = false;
+
+int deadZone = 40; 
+int center = 512;
+float speed = 0.2; 
+
+//objects
+Servo Broll;
+Servo Bpitch;
+Servo Epitch;
+Servo Wpitch;
+Servo Grip;  
+
+//Function
+void moveServo() {
+  Broll.write((int)calbJoy1h);
+  Bpitch.write((int)calbJoy1v);
+  Epitch.write((int)calbJoy2h);
+  Wpitch.write((int)calbJoy2v);
+  Grip.write((int)angleGrip);
+}
+
+void setup() {
+
+Serial.begin(9600);
+
+pinMode(2, INPUT_PULLUP); // Grip Close
+pinMode(12, INPUT_PULLUP); // Grip Open
+
+Broll.attach(3,rollMin,rollMax);
+Bpitch.attach(5,pitchMin,pitchMax);
+Epitch.attach(6);
+Wpitch.attach(11);
+Grip.attach(13);
+Serial.print(F("System initialized"));
+}
+
+void loop() {
+StartloopTime = micros();
+
+// Button Logic for Grip
+if (digitalRead(2) == LOW) angleGrip += 0.5;
+if (digitalRead(12) == LOW) angleGrip -= 0.5;
+angleGrip = constrain(angleGrip, 0, 180);
+
+joy1h = analogRead(A0);
+joy2h = analogRead(A1);
+joy1v = analogRead(A2);
+joy2v = analogRead(A3);
+
+// Movement logic (now that wires are actually connected!)
+if (abs(joy1h - center) > deadZone) calbJoy1h += (joy1h - center) * speed / 500.0;
+if (abs(joy1v - center) > deadZone) calbJoy1v += (joy1v - center) * speed / 500.0;
+if (abs(joy2h - center) > deadZone) calbJoy2h += (joy2h - center) * speed / 500.0;
+if (abs(joy2v - center) > deadZone) calbJoy2v += (joy2v - center) * speed / 500.0;
+
+calbJoy1h = constrain(calbJoy1h, 0, 180);
+calbJoy1v = constrain(calbJoy1v, 0, 180);
+calbJoy2h = constrain(calbJoy2h, 0, 180);
+calbJoy2v = constrain(calbJoy2v, 0, 180);
+
+moveServo();
+
+StoploopTime = micros();
+if(millis() % 500 == 0) {
+  Serial.println("LoopTime:");
+  Serial.print(StoploopTime - StartloopTime);
+}
+}
 
