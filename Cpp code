@@ -1,6 +1,6 @@
 /* --Robotic arm using joystick control
---Version:0.3 --Beta --git_history_Ver:0
-Git_Status:Non Existent
+--Version:0.5 --Beta --git_history_Ver:0.2
+Git_Status:pushed 
 
 Joy1h - Broll 
 Joy2h - Bpitch
@@ -102,4 +102,3 @@ if(millis() % 500 == 0) {
   Serial.print(StoploopTime - StartloopTime);
 }
 }
-
