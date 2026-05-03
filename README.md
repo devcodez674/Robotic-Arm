@@ -4,7 +4,7 @@ DIY robotic arm using servo-driven modular joints and custom 3D printed mounts.
 
 ## CAD Preview
 
-![Bracket Assembly](Images/bracket.jpg)
+![Bracket Assembly](./Bracket.jpg)
 
 ## Goals
 - Multi-axis movement
